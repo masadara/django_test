@@ -22,6 +22,7 @@ class Breed(models.Model):
     def __str__(self):
         return self.name
 
+
 class Dog(models.Model):
     name = models.CharField(
         max_length=100, verbose_name="Кличка собаки", help_text="Введите кличку собы"
@@ -33,7 +34,7 @@ class Dog(models.Model):
         help_text="Введите породу собы",
         blank=True,
         null=True,
-        related_name='dogs',
+        related_name="dogs",
     )
     photo = models.ImageField(
         upload_to="dogs/photo",
@@ -56,6 +57,3 @@ class Dog(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
