@@ -1,0 +1,57 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Товары для детей",
+        "description": ""
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "сиденья",
+        "description": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+        "name": "стул",
+        "description": "табурет",
+        "photo": "",
+        "category": null,
+        "sell_price": 25.0,
+        "created_at": "2024-01-10T21:00:00Z",
+        "updated_at": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+        "name": "стул",
+        "description": "табурет",
+        "photo": "",
+        "category": null,
+        "sell_price": 25.0,
+        "created_at": "2024-01-10T23:02:02Z",
+        "updated_at": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+        "name": "стул2",
+        "description": "табурет",
+        "photo": "",
+        "category": 2,
+        "sell_price": 600.0,
+        "created_at": "2024-01-10T23:02:02Z",
+        "updated_at": null
+    }
+}
+]
