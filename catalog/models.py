@@ -65,11 +65,15 @@ class Product(models.Model):
         verbose_name="Дата изменения",
         help_text="Введите дату изменения",
     )
+    is_published = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["category", "name"]
+        permissions = [
+            ('can_unpublish_product', 'Can unpublish product'),
+        ]
 
     def __str__(self):
         return self.name
