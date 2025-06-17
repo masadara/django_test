@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -66,6 +67,14 @@ class Product(models.Model):
         help_text="Введите дату изменения",
     )
     is_published = models.BooleanField(default=False)
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='products',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Продукт"

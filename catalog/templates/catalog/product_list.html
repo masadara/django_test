@@ -15,11 +15,11 @@
                 <div class="btn-group">
                   <a class="btn btn-primary" href="{% url 'catalog:product_detail' product.pk %}" role="button">Просмотр</a>
 <!--                  <a class="btn btn-primary" href="{% url 'catalog:product_update' product.pk %}" role="button">Редактировать</a>-->
-<!--                  <a class="btn btn-primary" href="{% url 'catalog:product_delete' product.pk %}" role="button">Удалить</a>-->
+                  <a class="btn btn-primary" href="{% url 'catalog:product_delete' product.pk %}" role="button">Удалить</a>
                   <a class="btn btn-primary" href="{% url 'catalog:product_update' product.pk %}" role="button">Редактировать</a>
-                  {% if perms.catalog.delete_product %}
-    <a class="btn btn-primary" href="{% url 'catalog:product_delete' product.pk %}" role="button">Удалить</a>
-  {% endif %}
+<!--                  {% if perms.catalog.delete_product %}-->
+<!--    <a class="btn btn-primary" href="{% url 'catalog:product_delete' product.pk %}" role="button">Удалить</a>-->
+<!--  {% endif %}-->
                 </div>
               </div>
             </div>

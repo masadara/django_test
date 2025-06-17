@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.views.generic import ListView, DetailView, View, DeleteView
 from catalog.models import Product
 from .forms import ProductForm
@@ -41,27 +41,34 @@ def product_create(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('product_list.html')  # или другой URL
+            product = form.save(commit=False)
+            product.owner = request.user
+            product.save()
+            return redirect('/')
     else:
         form = ProductForm()
     return render(request, 'catalog/product_form.html', {'form': form})
 
 def product_update(request, pk):
     product = get_object_or_404(Product, pk=pk)
+    if product.owner != request.user:
+        return HttpResponseForbidden()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            return redirect('product_list')  # или другой URL
+            return redirect('/')
     else:
         form = ProductForm(instance=product)
     return render(request, 'catalog/product_form.html', {'form': form})
 
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
+    if product.owner != request.user and not request.user.groups.filter(name='Модератор продуктов').exists():
+        return HttpResponseForbidden()
     if request.method == 'POST':
         product.delete()
+        return redirect('/')
     return render(request, 'catalog/product_delete.html', {'product': product})
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -70,7 +77,11 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = '/products/'
 
     def test_func(self):
-        return self.request.user.has_perm('catalog.delete_product')
+        obj = self.get_object()
+        return (
+                obj.owner == self.request.user or
+                self.request.user.groups.filter(name='Модератор продуктов').exists()
+        )
 
 class ProductUnpublishView(LoginRequiredMixin, PermissionRequiredMixin, View):
     permission_required = 'catalog.can_unpublish_product'
