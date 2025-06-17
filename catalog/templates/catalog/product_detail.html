@@ -1,0 +1,39 @@
+{% extends 'catalog/base.html'%}
+{% load my_tags %}
+{% block content %}
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="{{ product.photo | media_filter}}">
+            <div class="card-body">
+              <p class="card-text">{{ object.name }}</p>
+              <p class="card-text">{{ object.description }}</p>
+              <p class="card-text">{{ object.sell_price }} рублей</p>
+    <form method="post" action="{% url 'catalog:product_unpublish' product.pk %}">
+        {% csrf_token %}
+<!--        <button type="submit">Отменить публикацию</button>-->
+<!--    </form>-->
+
+<!--    <a class="btn btn-danger" href="{% url 'catalog:product_delete' product.pk %}">Удалить продукт</a>-->
+        {% if perms.catalog.can_unpublish_product %}
+<form method="post" action="{% url 'catalog:product_unpublish' product.pk %}">
+    {% csrf_token %}
+    <button type="submit">Отменить публикацию</button>
+</form>
+{% endif %}
+
+{% if perms.catalog.delete_product %}
+<a class="btn btn-danger" href="{% url 'catalog:product_delete' product.pk %}">Удалить продукт</a>
+{% endif %}
+
+              <div class="d-flex justify-content-between align-items-center">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock%}

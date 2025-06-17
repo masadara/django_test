@@ -1,0 +1,31 @@
+{% extends 'catalog/base.html'%}
+{% load my_tags %}
+{% block content %}
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h1>Удалить продукт?</h1>
+                <p>Вы уверены, что хотите удалить "{{ product.name }}"?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+                <a href="{% url 'catalog:prod_list' %}" class="btn btn-secondary">Отмена</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock%}
