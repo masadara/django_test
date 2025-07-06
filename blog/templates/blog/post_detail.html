@@ -1,0 +1,14 @@
+<h1>{{ post.title }}</h1>
+
+{% if post.preview_image %}
+    <img src="{{ post.preview_image.url }}" alt="Preview Image">
+{% else %}
+    <p>Изображение отсутствует.</p>
+{% endif %}
+
+<p>{{ post.content }}</p>
+<p>Дата создания: {{ post.created_at }}</p>
+<p>Просмотров: {{ post.views_count }}</p>
+<a href="{% url 'post_update' post.pk %}">Редактировать</a>
+<a href="{% url 'post_delete' post.pk %}">Удалить</a>
+<a href="{% url 'post_list' %}">Назад к списку</a>
