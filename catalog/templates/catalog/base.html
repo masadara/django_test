@@ -173,11 +173,35 @@
       <div class="col-lg-6 col-md-8 mx-auto">
         <h1 class="fw-light">Наименования товаров</h1>
         <p class="lead text-body-secondary">Магазин "у давида"</p>
+        <p>Категории в контексте: {{ all_categories.count }}</p>
+<ul>
+  {% for cat in all_categories %}
+    <li>{{ cat.name }}</li>
+  {% empty %}
+    <li>Категории отсутствуют</li>
+  {% endfor %}
+</ul>
         <p>
           {% if user.is_authenticated %}
           <a class="btn btn-primary my-2" href="{% url 'catalog:product_create' %}" role="button">Добавить продукт</a>
           {% endif %}
-          <a href="{% url 'catalog:prod_list' %}" class="btn btn-primary my-2">Главная</a>
+          <div class="btn-group my-2">
+            <a href="{% url 'catalog:prod_list' %}" class="btn btn-primary">Главная</a>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">Выбрать категорию</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="{% url 'catalog:products_by_category' 0 %}">Без категории</a>
+              </li>
+              {% for cat in all_categories %}
+                <li>
+                  <a class="dropdown-item" href="{% url 'catalog:products_by_category' cat.id %}">{{ cat.name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+<!--          <a href="{% url 'catalog:prod_list' %}" class="btn btn-primary my-2">Главная</a>-->
         </p>
       </div>
     </div>

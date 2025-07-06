@@ -3,8 +3,9 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseForbidden
 from django.views.generic import ListView, DetailView, View, DeleteView
-from catalog.models import Product
+from catalog.models import Product, Category
 from .forms import ProductForm
+from .services import get_prod_from_cache, get_products_by_category
 
 
 # Create your views here.
@@ -29,15 +30,20 @@ class ContactView(View):
 class ProductListView(ListView):
     model = Product
 
+    def get_queryset(self):
+        return get_prod_from_cache()
+
 class ProductDetailView(DetailView, LoginRequiredMixin):
     model = Product
     template_name = 'catalog/product_detail.html'
 
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'catalog/product_list.html', {'products': products})
+    all_categories = Category.objects.all()
+    return render(request, 'catalog/product_list.html', {'products': products, 'all_categories': all_categories})
 
 def product_create(request):
+    all_categories = Category.objects.all()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -47,9 +53,10 @@ def product_create(request):
             return redirect('/')
     else:
         form = ProductForm()
-    return render(request, 'catalog/product_form.html', {'form': form})
+    return render(request, 'catalog/product_form.html', {'form': form, 'all_categories': all_categories})
 
 def product_update(request, pk):
+    all_categories = Category.objects.all()
     product = get_object_or_404(Product, pk=pk)
     if product.owner != request.user:
         return HttpResponseForbidden()
@@ -60,16 +67,17 @@ def product_update(request, pk):
             return redirect('/')
     else:
         form = ProductForm(instance=product)
-    return render(request, 'catalog/product_form.html', {'form': form})
+    return render(request, 'catalog/product_form.html', {'form': form, 'all_categories': all_categories})
 
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
+    all_categories = Category.objects.all()
     if product.owner != request.user and not request.user.groups.filter(name='Модератор продуктов').exists():
         return HttpResponseForbidden()
     if request.method == 'POST':
         product.delete()
         return redirect('/')
-    return render(request, 'catalog/product_delete.html', {'product': product})
+    return render(request, 'catalog/product_delete.html', {'product': product, 'all_categories': all_categories})
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
@@ -92,3 +100,15 @@ class ProductUnpublishView(LoginRequiredMixin, PermissionRequiredMixin, View):
         product.is_published = False
         product.save()
         return redirect('/')
+
+def product_list_by_category(request, category_id):
+    all_categories = Category.objects.all()
+    products = get_products_by_category(category_id)
+    category = None if category_id == 0 else Category.objects.filter(id=category_id).first()
+
+    context = {
+        'all_categories': all_categories,
+        'category': category,
+        'products': products,
+    }
+    return render(request, 'catalog/product_list_by_category.html', context)
